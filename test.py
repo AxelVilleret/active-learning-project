@@ -11,7 +11,7 @@ from keras.preprocessing.sequence import pad_sequences
 import pickle
 
 vocab2int = pickle.load(open("data/vocabfood2int.pickle", "rb"))
-model = load_model("models/base.h5")
+model = load_model("models/base_0.h5")
 
 
 if __name__ == "__main__":

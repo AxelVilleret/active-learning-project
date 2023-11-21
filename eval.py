@@ -9,12 +9,12 @@ from keras.preprocessing import sequence
 from config import sequence_length, embedding_size, batch_size, epochs
 
 # Replace 'pretrained_model_path' with the actual path to your pretrained model.
-pretrained_model_path = 'modelss/base.h5'
+pretrained_model_path = 'models/base_0.h5'
 pretrained_model = load_model(pretrained_model_path)
 
+X_train, X_test, y_train, y_test, vocab = load_cloth_review_data()
 # X_train, X_test, y_train, y_test, vocab = load_food_review_data()
-X_test, y_test, vocab = load_cloth_review_data(scope="test")
-#X_train = sequence.pad_sequences(X_train, maxlen=sequence_length)
+
 X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
 
 #y_train = y_train.astype(np.float32)

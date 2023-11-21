@@ -6,12 +6,14 @@ from keras.preprocessing import sequence
 from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 
-X_train, y_train, vocab = load_cloth_review_data(scope="train")
+X_train, X_test, y_train, y_test, vocab = load_cloth_review_data()
 
 X_train = sequence.pad_sequences(X_train, maxlen=sequence_length)
 y_train = y_train.astype(np.int32)
+X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
+y_test = y_test.astype(np.int32)
 
-pretrained_model_path = 'models/base.h5'
+pretrained_model_path = 'models/base_0.h5'
 pretrained_model = load_model(pretrained_model_path)
 
 def convert_pourcentage_to_quantity(pourcentage):
@@ -52,13 +54,8 @@ def select_samples_by_entropy(quantity):
     return X_train_entropy, y_train_entropy
 
 def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
-    # Clone the pretrained model
-    # model = clone_model(pretrained_model)
-    # model.compile(loss='sparse_categorical_crossentropy',
-    #               optimizer='adam',
-    #               metrics=['accuracy'])
-    # model.set_weights(pretrained_model.get_weights())
-    model_path = 'models/base.h5'
+
+    model_path = 'models/base_0.h5'
     model = load_model(model_path)
     checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
     model.fit(X_train_selected, y_train_selected, epochs=epochs, batch_size=batch_size, callbacks=[checkpointer])
@@ -68,15 +65,12 @@ def evaluate_model(algorithm, pourcentage):
     model_path = f'models/{algorithm}_{pourcentage}.h5'
     model = load_model(model_path)
     
-    X_test, y_test, vocab = load_cloth_review_data(scope="test")
-    X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
-    y_test = y_test.astype(np.int32)
-    
     # Evaluate the model on the test data
     y_pred = model.predict(X_test)
     acc = accuracy_score(y_test, np.argmax(y_pred, axis=1))
-    print(f'Accuracy - {algorithm} - {pourcentage} : {acc:.4f}')
-    return f'Accuracy - {algorithm} - {pourcentage} : {acc:.4f}'
+    result = f'{algorithm} - {pourcentage} - {acc:.4f}'
+    print(result)
+    return result
 
 
 algorithms = {
@@ -97,6 +91,9 @@ pourcentages = [
 
 def main():
     results = []
+    results.append("Model - Pourcentage - Accuracy")
+    results.append("-------------------------------")
+    results.append(evaluate_model("base", 0))
     for algorithm in algorithms:
         for pourcentage in pourcentages:
             quantity = convert_pourcentage_to_quantity(pourcentage)

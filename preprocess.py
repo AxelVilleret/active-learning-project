@@ -11,9 +11,6 @@ from config import N, test_size
 
 def load_food_review_data():
     df = pd.read_csv("data/ReviewsFood.csv")
-    # preview
-    print(df.head())
-    print(df.tail())
     vocab = []
     X = np.zeros((len(df)//100, 2), dtype=object)
     print(len(X))
@@ -55,21 +52,16 @@ def load_food_review_data():
     return X_train, X_test, y_train, y_test, vocab
 
 
-def load_cloth_review_data(scope="train"):
-    if scope == "train":
-        df = pd.read_csv("data/active_learning_set.csv")
-    else:
-        df = pd.read_csv("data/test_set.csv")
-
-    # preview
-    # print(df.head())
-    # print(df.tail())
+def load_cloth_review_data():
+    df = pd.read_csv("data/ReviewsCloth.csv")
     vocab = []
+    print(len(df))
     X = np.zeros((len(df), 2), dtype=object)
     for i in tqdm.tqdm(range(len(df)), "Cleaning X"):
         target = df['Review Text'].loc[i]
         rating = df['Rating'].loc[i]
-        if not target == "empty" and len(str(rating)) == 1:
+        if not target == "empty":
+            
             X[i, 0] = clean_text(target)
             X[i, 1] = rating-1
             for word in X[i, 0].split():
@@ -103,4 +95,7 @@ def load_cloth_review_data(scope="train"):
     print("min_length:", min(lengths))
     print("max_length:", max(lengths))
 
-    return X[:, 0], X[:, 1], vocab
+    X_train, X_test, y_train, y_test = train_test_split(
+        X[:, 0], X[:, 1], test_size=test_size, shuffle=True, random_state=19)
+
+    return X_train, X_test, y_train, y_test, vocab

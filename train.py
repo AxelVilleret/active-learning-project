@@ -28,8 +28,6 @@ print("X_test.shape:", X_test.dtype)
 
 print("y_train.shape:", y_train.dtype)
 print("y_test.shape:", y_test.dtype)
-
-
  
 model = get_model(vocab_size, sequence_length=sequence_length, embedding_size=embedding_size, num_classes=num_classes)
 # Compiler le modèle
@@ -38,10 +36,10 @@ model.compile(loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
 checkpointer = ModelCheckpoint(
-    "modelss/base.h5", save_best_only=True, verbose=1)
+    "models/base_0.h5", save_best_only=True, verbose=1)
 
 model.fit(X_train, y_train, epochs=epochs, validation_data=(
     X_test, y_test), batch_size=batch_size, callbacks=[checkpointer])
 
 # Sauvegarder le modèle
-# model.save('models/base.h5')
+# model.save('models/base_0.h5')
