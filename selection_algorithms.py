@@ -5,6 +5,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.preprocessing import sequence
 from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
+from datetime import datetime
 
 X_train, X_test, y_train, y_test, vocab = load_cloth_review_data()
 
@@ -57,9 +58,9 @@ def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
 
     model_path = 'models/base_0.h5'
     model = load_model(model_path)
-    checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
-    model.fit(X_train_selected, y_train_selected, epochs=epochs, batch_size=batch_size, callbacks=[checkpointer])
-    # model.save(f"models/{algorithm}_{pourcentage}.h5")
+    # checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
+    model.fit(X_train_selected, y_train_selected, epochs=epochs, batch_size=batch_size)
+    model.save(f"models/{algorithm}_{pourcentage}.h5")
 
 def evaluate_model(algorithm, pourcentage):
     model_path = f'models/{algorithm}_{pourcentage}.h5'
@@ -74,7 +75,7 @@ def evaluate_model(algorithm, pourcentage):
 
 
 algorithms = {
-    "random": select_samples_randomly,
+    # "random": select_samples_randomly,
     "least_confidence": select_samples_by_least_confidence,
     "margin": select_samples_by_margin,
     "entropy": select_samples_by_entropy
@@ -101,7 +102,8 @@ def main():
             retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage)
             results.append(evaluate_model(algorithm, pourcentage))
     print(results)
-    with open("results.txt", "w") as fichier:
+    today = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    with open(f'results/{today}', "w") as fichier:
     # Ajouter un retour à la ligne après chaque élément de la liste
         fichier.writelines(ligne + "\n" for ligne in results)
 

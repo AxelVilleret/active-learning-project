@@ -20,14 +20,6 @@ X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
 
 y_train = y_train.astype(np.int32)
 y_test = y_test.astype(np.int32)
-
-
-
-print("X_train.shape:", X_train.dtype)
-print("X_test.shape:", X_test.dtype)
-
-print("y_train.shape:", y_train.dtype)
-print("y_test.shape:", y_test.dtype)
  
 model = get_model(vocab_size, sequence_length=sequence_length, embedding_size=embedding_size, num_classes=num_classes)
 # Compiler le modèle

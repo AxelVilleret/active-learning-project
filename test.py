@@ -1,16 +1,11 @@
-
-import keras
-import tensorflow as tf
 from keras.models import load_model
 import numpy as np
-from model import get_model
 from utils import clean_text, tokenize_words
 from config import embedding_size, sequence_length
 from keras.preprocessing.sequence import pad_sequences
+from preprocess import get_dict
 
-import pickle
-
-vocab2int = pickle.load(open("data/vocabfood2int.pickle", "rb"))
+vocab2int = get_dict()
 model = load_model("models/base_0.h5")
 
 

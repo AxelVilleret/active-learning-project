@@ -12,8 +12,8 @@ from config import sequence_length, embedding_size, batch_size, epochs
 pretrained_model_path = 'models/base_0.h5'
 pretrained_model = load_model(pretrained_model_path)
 
-X_train, X_test, y_train, y_test, vocab = load_cloth_review_data()
-# X_train, X_test, y_train, y_test, vocab = load_food_review_data()
+# X_train, X_test, y_train, y_test, vocab = load_cloth_review_data()
+X_train, X_test, y_train, y_test, vocab = load_food_review_data()
 
 X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
 
@@ -23,7 +23,7 @@ y_test = y_test.astype(np.int32)
 # Evaluate the model on the test data
 y_pred = pretrained_model.predict(X_test)
 
-print(y_test.shape)
+# print(y_test.shape)
 
 acc = accuracy_score(y_test, np.argmax(y_pred, axis=1))
 print(f'Accuracy: {acc:.4f}')
