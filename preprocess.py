@@ -67,10 +67,11 @@ def load_food_review_data():
     for i in tqdm.tqdm(range(X.shape[0]), "Tokenizing words"):
         X[i, 0] = tokenize_words(X[i, 0], vocab2int)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X[:, 0], X[:, 1], test_size=test_size, shuffle=True, random_state=19)
+    X_train, X_temp, y_train, y_temp = train_test_split(
+        X[:, 0], X[:, 1], test_size=0.2, random_state=19)
+    X_validation, X_test, y_validation, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=19)
 
-    return X_train, X_test, y_train, y_test, vocab2int
+    return X_train, X_validation, X_test, y_train, y_validation, y_test, vocab2int
 
 
 def load_cloth_review_data():
@@ -97,7 +98,9 @@ def load_cloth_review_data():
     for i in tqdm.tqdm(range(X.shape[0]), "Tokenizing words"):
         X[i, 0] = tokenize_words(X[i, 0], vocab2int)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X[:, 0], X[:, 1], test_size=test_size, shuffle=True, random_state=19)
+    X_train, X_temp, y_train, y_temp = train_test_split(
+        X[:, 0], X[:, 1], test_size=0.2, random_state=19)
+    X_validation, X_test, y_validation, y_test = train_test_split(
+        X_temp, y_temp, test_size=0.5, random_state=19)
 
-    return X_train, X_test, y_train, y_test, vocab2int
+    return X_train, X_validation, X_test, y_train, y_validation, y_test, vocab2int

@@ -1,0 +1,3 @@
+données de validation entrainement 
+overfitting
+nombres de données à considérer dans les deux datasets

@@ -7,10 +7,12 @@ from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 from datetime import datetime
 
-X_train, X_test, y_train, y_test, vocab = load_cloth_review_data()
+X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_cloth_review_data()
 
 X_train = sequence.pad_sequences(X_train, maxlen=sequence_length)
 y_train = y_train.astype(np.int32)
+X_validation = sequence.pad_sequences(X_validation, maxlen=sequence_length)
+y_validation = y_validation.astype(np.int32)
 X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
 y_test = y_test.astype(np.int32)
 
@@ -54,13 +56,21 @@ def select_samples_by_entropy(quantity):
     y_train_entropy = y_train[entropy[:quantity]]
     return X_train_entropy, y_train_entropy
 
+def select_by_mixed_with_integrated_scores(first_method, second_method, quantity_with_first_method):
+    quantity_with_first_method = convert_pourcentage_to_quantity(quantity_with_first_method)
+    quantity_with_second_method = convert_pourcentage_to_quantity(100 - quantity_with_first_method)
+    X_train_first_method, y_train_first_method = algorithms[first_method](quantity_with_first_method)
+    X_train_second_method, y_train_second_method = algorithms[second_method](quantity_with_second_method)
+    return np.concatenate((X_train_first_method, X_train_second_method)), np.concatenate((y_train_first_method, y_train_second_method))
+
 def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
 
     model_path = 'models/base_0.h5'
     model = load_model(model_path)
-    # checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
-    model.fit(X_train_selected, y_train_selected, epochs=epochs, batch_size=batch_size)
-    model.save(f"models/{algorithm}_{pourcentage}.h5")
+    checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
+    model.fit(X_train_selected, y_train_selected, epochs=epochs, validation_data=(
+        X_validation, y_validation), batch_size=batch_size, callbacks=[checkpointer])
+    # model.save(f"models/{algorithm}_{pourcentage}.h5")
 
 def evaluate_model(algorithm, pourcentage):
     model_path = f'models/{algorithm}_{pourcentage}.h5'
