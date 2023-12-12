@@ -6,6 +6,7 @@ from keras.preprocessing import sequence
 from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 from datetime import datetime
+from sklearn.cluster import KMeans
 
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_cloth_review_data()
 
@@ -21,6 +22,27 @@ pretrained_model = load_model(pretrained_model_path)
 
 def convert_pourcentage_to_quantity(pourcentage):
     return int(pourcentage * len(X_train) / 100)
+
+def select_samples_by_clustering(quantity):
+    NB_CLUSTERS = quantity
+
+    # Utilisez KMeans pour regrouper les données non étiquetées
+    kmeans = KMeans(n_clusters=NB_CLUSTERS, random_state=0).fit(X_train)
+    quantity_per_cluster = int(quantity / NB_CLUSTERS)
+
+    X_train_clustering = []
+    y_train_clustering = []
+
+    # Pour chaque cluster, sélectionnez l'échantillon le plus proche du centroïde
+    for j in range(NB_CLUSTERS):
+        cluster_indices = np.where(kmeans.labels_ == j)[0]
+        centroid = kmeans.cluster_centers_[j]
+        distances = np.linalg.norm(X_train[cluster_indices] - centroid, axis=1)
+        closest_indices = np.argsort(distances)[:quantity_per_cluster]
+        X_train_clustering.extend(X_train[cluster_indices[closest_indices]])
+        y_train_clustering.extend(y_train[cluster_indices[closest_indices]])
+
+    return np.array(X_train_clustering), np.array(y_train_clustering)
 
 def select_samples_randomly(quantity):
     # Select samples randomly
@@ -56,12 +78,17 @@ def select_samples_by_entropy(quantity):
     y_train_entropy = y_train[entropy[:quantity]]
     return X_train_entropy, y_train_entropy
 
-def select_by_mixed_with_integrated_scores(first_method, second_method, quantity_with_first_method):
-    quantity_with_first_method = convert_pourcentage_to_quantity(quantity_with_first_method)
-    quantity_with_second_method = convert_pourcentage_to_quantity(100 - quantity_with_first_method)
+def select_by_mixed_with_integrated_scores(first_method, second_method, quantity):
+    quantity_with_first_method = convert_pourcentage_to_quantity(
+        quantity * 0.5)
+    quantity_with_second_method = convert_pourcentage_to_quantity(
+        quantity * 0.5)
     X_train_first_method, y_train_first_method = algorithms[first_method](quantity_with_first_method)
     X_train_second_method, y_train_second_method = algorithms[second_method](quantity_with_second_method)
     return np.concatenate((X_train_first_method, X_train_second_method)), np.concatenate((y_train_first_method, y_train_second_method))
+
+def select_by_mixed_with_least_confidence_and_representative_sampling(quantity):
+    return select_by_mixed_with_integrated_scores("least_confidence", "representative_sampling", quantity)
 
 def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
 
@@ -85,19 +112,23 @@ def evaluate_model(algorithm, pourcentage):
 
 
 algorithms = {
-    # "random": select_samples_randomly,
-    "least_confidence": select_samples_by_least_confidence,
-    "margin": select_samples_by_margin,
-    "entropy": select_samples_by_entropy
+    "random": select_samples_randomly,
+    # "clustering": select_samples_by_clustering,
+    # "least_confidence": select_samples_by_least_confidence,
+    # "margin": select_samples_by_margin,
+    # "entropy": select_samples_by_entropy
 }
 
 pourcentages = [
+    1,
+    2,
+    5,
     10, 
-    15, 
-    20, 
-    25, 
-    30, 
-    35,
+    # 15, 
+    # 20, 
+    # 25, 
+    # 30, 
+    # 35,
 ]
 
 def main():
@@ -113,7 +144,7 @@ def main():
             results.append(evaluate_model(algorithm, pourcentage))
     print(results)
     today = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    with open(f'results/{today}', "w") as fichier:
+    with open(f'results/{today}.txt', "w") as fichier:
     # Ajouter un retour à la ligne après chaque élément de la liste
         fichier.writelines(ligne + "\n" for ligne in results)
 

@@ -1,0 +1,5 @@
+Model - Pourcentage - Accuracy
+-------------------------------
+base - 0 - 0.4971
+random - 10 - 0.5837
+least_confidence - 10 - 0.5691

@@ -1,0 +1,6 @@
+Model - Pourcentage - Accuracy
+-------------------------------
+base - 0 - 0.4971
+random - 10 - 0.5850
+random - 15 - 0.5934
+random - 20 - 0.5925
