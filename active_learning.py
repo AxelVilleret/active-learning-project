@@ -1,4 +1,4 @@
-from preprocess import load_cloth_review_data
+from preprocess import load_cloth_review_data, load_food_review_data
 import numpy as np
 from keras.models import load_model, clone_model
 from keras.callbacks import ModelCheckpoint
@@ -23,6 +23,13 @@ pretrained_model = load_model(pretrained_model_path)
 def convert_pourcentage_to_quantity(pourcentage):
     return int(pourcentage * len(X_train) / 100)
 
+def select_samples_randomly(quantity):
+    # Select samples randomly
+    random_indices = np.random.choice(len(X_train), quantity, replace=False)
+    X_train_random = X_train[random_indices]
+    y_train_random = y_train[random_indices]
+    return X_train_random, y_train_random
+
 def select_samples_by_clustering(quantity):
     NB_CLUSTERS = quantity
 
@@ -44,12 +51,19 @@ def select_samples_by_clustering(quantity):
 
     return np.array(X_train_clustering), np.array(y_train_clustering)
 
-def select_samples_randomly(quantity):
-    # Select samples randomly
-    random_indices = np.random.choice(len(X_train), quantity, replace=False)
-    X_train_random = X_train[random_indices]
-    y_train_random = y_train[random_indices]
-    return X_train_random, y_train_random
+def select_samples_by_representative_sampling(quantity):
+    X_train_food, X_validation_food, X_test_food, y_train_food, y_validation_food, y_test_food, vocab_food = load_food_review_data()
+    X_train_food = sequence.pad_sequences(X_train_food, maxlen=sequence_length)
+    kmeans_food = KMeans(n_clusters=1, random_state=0).fit(X_train_food)
+    centroid_food = kmeans_food.cluster_centers_[0]
+    kmeans_cloth = KMeans(n_clusters=1, random_state=0).fit(X_train)
+    centroid_cloth = kmeans_cloth.cluster_centers_[0]
+    # Sample items that have the greatest outlier score from the training relative to their outlier score from the unlabeled data (ɗ/ɗ’)
+    outlier_scores = np.linalg.norm(X_train - centroid_food, axis=1) / np.linalg.norm(X_train - centroid_cloth, axis=1)
+    representative_samples = np.argsort(outlier_scores)[-quantity:]
+    X_train_representative_sampling = X_train[representative_samples]
+    y_train_representative_sampling = y_train[representative_samples]
+    return X_train_representative_sampling, y_train_representative_sampling
 
 def select_samples_by_least_confidence(quantity):
     # Evaluate the model on the test data
@@ -112,8 +126,9 @@ def evaluate_model(algorithm, pourcentage):
 
 
 algorithms = {
-    "random": select_samples_randomly,
+    # "random": select_samples_randomly,
     # "clustering": select_samples_by_clustering,
+    "representative_sampling": select_samples_by_representative_sampling,
     # "least_confidence": select_samples_by_least_confidence,
     # "margin": select_samples_by_margin,
     # "entropy": select_samples_by_entropy
@@ -122,8 +137,8 @@ algorithms = {
 pourcentages = [
     1,
     2,
-    5,
-    10, 
+    # 5,
+    # 10, 
     # 15, 
     # 20, 
     # 25, 
