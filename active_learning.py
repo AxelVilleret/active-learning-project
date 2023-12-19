@@ -7,6 +7,7 @@ from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 from datetime import datetime
 from sklearn.cluster import KMeans
+from visualisation import update_from_string
 
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_cloth_review_data()
 
@@ -105,7 +106,7 @@ def select_by_mixed_with_least_confidence_and_representative_sampling(quantity):
     return select_by_mixed_with_integrated_scores("least_confidence", "representative_sampling", quantity)
 
 def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
-
+    # print(f"Retraining model with this number of samples: {len(X_train_selected)}")
     model_path = 'models/base_0.h5'
     model = load_model(model_path)
     checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
@@ -126,12 +127,12 @@ def evaluate_model(algorithm, pourcentage):
 
 
 algorithms = {
-    # "random": select_samples_randomly,
-    # "clustering": select_samples_by_clustering,
+    "random": select_samples_randomly,
+    "clustering": select_samples_by_clustering,
     "representative_sampling": select_samples_by_representative_sampling,
-    # "least_confidence": select_samples_by_least_confidence,
-    # "margin": select_samples_by_margin,
-    # "entropy": select_samples_by_entropy
+    "least_confidence": select_samples_by_least_confidence,
+    "margin": select_samples_by_margin,
+    "entropy": select_samples_by_entropy
 }
 
 pourcentages = [
@@ -147,22 +148,13 @@ pourcentages = [
 ]
 
 def main():
-    results = []
-    results.append("Model - Pourcentage - Accuracy")
-    results.append("-------------------------------")
-    results.append(evaluate_model("base", 0))
+    update_from_string(evaluate_model("base", 0))
     for algorithm in algorithms:
         for pourcentage in pourcentages:
             quantity = convert_pourcentage_to_quantity(pourcentage)
             X_train_selected, y_train_selected = algorithms[algorithm](quantity)
             retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage)
-            results.append(evaluate_model(algorithm, pourcentage))
-    print(results)
-    today = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    with open(f'results/{today}.txt', "w") as fichier:
-    # Ajouter un retour à la ligne après chaque élément de la liste
-        fichier.writelines(ligne + "\n" for ligne in results)
-
+            update_from_string(evaluate_model(algorithm, pourcentage))
 
 if __name__ == "__main__":
     main()

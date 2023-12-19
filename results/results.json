@@ -1,0 +1,199 @@
+{
+    "methodes": [
+        {
+            "nom": "base",
+            "performances": [
+                {
+                    "pourcentage": 0,
+                    "valeur": 0.4971
+                },
+                {
+                    "pourcentage": 0,
+                    "valeur": 0.4971
+                },
+                {
+                    "pourcentage": 0,
+                    "valeur": 0.4971
+                },
+                {
+                    "pourcentage": 0,
+                    "valeur": 0.4971
+                }
+            ]
+        },
+        {
+            "nom": "random",
+            "performances": [
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5413
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5461
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5408
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5497
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.543
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5514
+                }
+            ]
+        },
+        {
+            "nom": "clustering",
+            "performances": [
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.54
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5532
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5395
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.551
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5404
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5483
+                }
+            ]
+        },
+        {
+            "nom": "representative_sampling",
+            "performances": [
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5369
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5492
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5369
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5483
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5422
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5479
+                }
+            ]
+        },
+        {
+            "nom": "least_confidence",
+            "performances": [
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5373
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5501
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5347
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5523
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5386
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5558
+                }
+            ]
+        },
+        {
+            "nom": "margin",
+            "performances": [
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5448
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5519
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5453
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5563
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.5439
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5567
+                }
+            ]
+        },
+        {
+            "nom": "entropy",
+            "performances": [
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.4865
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5294
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.4874
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5311
+                },
+                {
+                    "pourcentage": 1,
+                    "valeur": 0.483
+                },
+                {
+                    "pourcentage": 2,
+                    "valeur": 0.5329
+                }
+            ]
+        }
+    ]
+}
