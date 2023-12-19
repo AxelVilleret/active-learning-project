@@ -94,19 +94,21 @@ def select_samples_by_entropy(quantity):
     return X_train_entropy, y_train_entropy
 
 def select_by_mixed_with_integrated_scores(first_method, second_method, quantity):
-    quantity_with_first_method = convert_pourcentage_to_quantity(
-        quantity * 0.5)
-    quantity_with_second_method = convert_pourcentage_to_quantity(
-        quantity * 0.5)
+    quantity_with_first_method = quantity // 2
+    quantity_with_second_method = quantity - quantity_with_first_method
     X_train_first_method, y_train_first_method = algorithms[first_method](quantity_with_first_method)
     X_train_second_method, y_train_second_method = algorithms[second_method](quantity_with_second_method)
-    return np.concatenate((X_train_first_method, X_train_second_method)), np.concatenate((y_train_first_method, y_train_second_method))
+    X_train_mixed, y_train_mixed = np.concatenate((X_train_first_method, X_train_second_method)), np.concatenate((y_train_first_method, y_train_second_method))
+    return X_train_mixed, y_train_mixed
 
 def select_by_mixed_with_least_confidence_and_representative_sampling(quantity):
     return select_by_mixed_with_integrated_scores("least_confidence", "representative_sampling", quantity)
 
+def select_by_mixed_with_margin_and_clustering(quantity):
+    return select_by_mixed_with_integrated_scores("margin", "clustering", quantity)
+
 def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
-    # print(f"Retraining model with this number of samples: {len(X_train_selected)}")
+    print(f"Retraining model with this number of samples: {len(X_train_selected)}")
     model_path = 'models/base_0.h5'
     model = load_model(model_path)
     checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
@@ -132,7 +134,9 @@ algorithms = {
     "representative_sampling": select_samples_by_representative_sampling,
     "least_confidence": select_samples_by_least_confidence,
     "margin": select_samples_by_margin,
-    "entropy": select_samples_by_entropy
+    "entropy": select_samples_by_entropy,
+    "mixed_with_least_confidence_and_representative_sampling": select_by_mixed_with_least_confidence_and_representative_sampling,
+    "mixed_with_margin_and_clustering": select_by_mixed_with_margin_and_clustering,
 }
 
 pourcentages = [
