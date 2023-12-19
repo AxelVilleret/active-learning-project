@@ -1,3 +1,4 @@
+import glob
 from preprocess import load_cloth_review_data, load_food_review_data
 import numpy as np
 from keras.models import load_model, clone_model
@@ -7,7 +8,9 @@ from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 from datetime import datetime
 from sklearn.cluster import KMeans
-from visualisation import update_from_string
+from visualisation import RESULTS_PATH, update_json
+from collections import Counter
+import pandas as pd
 
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_cloth_review_data()
 
@@ -112,9 +115,10 @@ def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
     model_path = 'models/base_0.h5'
     model = load_model(model_path)
     checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
-    model.fit(X_train_selected, y_train_selected, epochs=epochs, validation_data=(
+    history = model.fit(X_train_selected, y_train_selected, epochs=epochs, validation_data=(
         X_validation, y_validation), batch_size=batch_size, callbacks=[checkpointer])
     # model.save(f"models/{algorithm}_{pourcentage}.h5")
+    return history
 
 def evaluate_model(algorithm, pourcentage):
     model_path = f'models/{algorithm}_{pourcentage}.h5'
@@ -125,18 +129,18 @@ def evaluate_model(algorithm, pourcentage):
     acc = accuracy_score(y_test, np.argmax(y_pred, axis=1))
     result = f'{algorithm} - {pourcentage} - {acc:.4f}'
     print(result)
-    return result
+    return acc
 
 
 algorithms = {
     "random": select_samples_randomly,
     "clustering": select_samples_by_clustering,
-    "representative_sampling": select_samples_by_representative_sampling,
-    "least_confidence": select_samples_by_least_confidence,
-    "margin": select_samples_by_margin,
-    "entropy": select_samples_by_entropy,
-    "mixed_with_least_confidence_and_representative_sampling": select_by_mixed_with_least_confidence_and_representative_sampling,
-    "mixed_with_margin_and_clustering": select_by_mixed_with_margin_and_clustering,
+    # "representative_sampling": select_samples_by_representative_sampling,
+    # "least_confidence": select_samples_by_least_confidence,
+    # "margin": select_samples_by_margin,
+    # "entropy": select_samples_by_entropy,
+    # "mixed_with_least_confidence_and_representative_sampling": select_by_mixed_with_least_confidence_and_representative_sampling,
+    # "mixed_with_margin_and_clustering": select_by_mixed_with_margin_and_clustering,
 }
 
 pourcentages = [
@@ -151,14 +155,40 @@ pourcentages = [
     # 35,
 ]
 
+selected_samples = {}
+
+def compare_samples(X, Y):
+    return len(np.intersect1d(X, Y)) / len(X)
+
+def in_common_pourcentages():
+    global selected_samples
+    matrix = []
+    algorithms = list(selected_samples.keys()) 
+    for i in range(len(pourcentages)):
+        current_matrix = pd.DataFrame(columns=algorithms, index=algorithms)
+        for algo_1 in algorithms:
+            for algo_2 in algorithms:
+                if algo_1 == algo_2:
+                    current_matrix[algo_1][algo_2] = 1
+                else:
+                    current_matrix[algo_1][algo_2] = compare_samples(selected_samples[algo_1][pourcentages[i]], selected_samples[algo_2][pourcentages[i]])
+        matrix.append(current_matrix)
+    print(matrix)
+
+
 def main():
-    update_from_string(evaluate_model("base", 0))
+    base_acc = evaluate_model("base", 0)
+    update_json(RESULTS_PATH, "base", 0, base_acc, None)
     for algorithm in algorithms:
+        selected_samples[algorithm] = {}
         for pourcentage in pourcentages:
             quantity = convert_pourcentage_to_quantity(pourcentage)
             X_train_selected, y_train_selected = algorithms[algorithm](quantity)
-            retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage)
-            update_from_string(evaluate_model(algorithm, pourcentage))
+            selected_samples[algorithm][pourcentage] = X_train_selected
+            history = retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage)
+            acc = evaluate_model(algorithm, pourcentage)
+            update_json(RESULTS_PATH, algorithm, pourcentage, acc, history.history)
+    in_common_pourcentages()
 
 if __name__ == "__main__":
     main()
