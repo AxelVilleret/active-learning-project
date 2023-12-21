@@ -133,11 +133,11 @@ def evaluate_model(algorithm, pourcentage):
 
 
 algorithms = {
-    "random": select_samples_randomly,
-    "clustering": select_samples_by_clustering,
+    # "random": select_samples_randomly,
+    # "clustering": select_samples_by_clustering,
     # "representative_sampling": select_samples_by_representative_sampling,
-    # "least_confidence": select_samples_by_least_confidence,
-    # "margin": select_samples_by_margin,
+    "least_confidence": select_samples_by_least_confidence,
+    "margin": select_samples_by_margin,
     # "entropy": select_samples_by_entropy,
     # "mixed_with_least_confidence_and_representative_sampling": select_by_mixed_with_least_confidence_and_representative_sampling,
     # "mixed_with_margin_and_clustering": select_by_mixed_with_margin_and_clustering,
@@ -145,7 +145,7 @@ algorithms = {
 
 pourcentages = [
     1,
-    2,
+    # 2,
     # 5,
     # 10, 
     # 15, 
@@ -157,23 +157,26 @@ pourcentages = [
 
 selected_samples = {}
 
-def compare_samples(X, Y):
-    return len(np.intersect1d(X, Y)) / len(X)
+
+def pourcentage_lignes_communes(matrice1, matrice2):
+    # Convertir les lignes en tuples pour qu'elles soient hashables
+    lignes_matrice1 = set(tuple(ligne) for ligne in matrice1)
+    lignes_matrice2 = set(tuple(ligne) for ligne in matrice2)
+    # Compter le nombre de lignes communes
+    lignes_communes = len(lignes_matrice1.intersection(lignes_matrice2))
+    # Calculer le pourcentage
+    pourcentage = lignes_communes / len(matrice1) * 100
+    return pourcentage
 
 def in_common_pourcentages():
     global selected_samples
-    matrix = []
     algorithms = list(selected_samples.keys()) 
     for i in range(len(pourcentages)):
         current_matrix = pd.DataFrame(columns=algorithms, index=algorithms)
         for algo_1 in algorithms:
             for algo_2 in algorithms:
-                if algo_1 == algo_2:
-                    current_matrix[algo_1][algo_2] = 1
-                else:
-                    current_matrix[algo_1][algo_2] = compare_samples(selected_samples[algo_1][pourcentages[i]], selected_samples[algo_2][pourcentages[i]])
-        matrix.append(current_matrix)
-    print(matrix)
+                current_matrix[algo_1][algo_2] = pourcentage_lignes_communes(selected_samples[algo_1][pourcentages[i]], selected_samples[algo_2][pourcentages[i]])
+        current_matrix.to_csv(f"results/in_common_{pourcentages[i]}.csv")
 
 
 def main():

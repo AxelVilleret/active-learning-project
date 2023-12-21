@@ -1,5 +1,0 @@
-Model - Pourcentage - Accuracy
--------------------------------
-base - 0 - 0.4971
-representative_sampling - 1 - 0.5413
-representative_sampling - 2 - 0.5479
