@@ -11,6 +11,7 @@ from sklearn.cluster import KMeans
 from visualisation import RESULTS_PATH, update_json
 from collections import Counter
 import pandas as pd
+from train_eval import PRETRAINED_MODEL_PATH
 
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_cloth_review_data()
 
@@ -21,8 +22,7 @@ y_validation = y_validation.astype(np.int32)
 X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
 y_test = y_test.astype(np.int32)
 
-pretrained_model_path = 'models/base_0.h5'
-pretrained_model = load_model(pretrained_model_path)
+pretrained_model = load_model(PRETRAINED_MODEL_PATH)
 
 def convert_pourcentage_to_quantity(pourcentage):
     return int(pourcentage * len(X_train) / 100)
@@ -125,19 +125,18 @@ def evaluate_model(algorithm, pourcentage):
     model = load_model(model_path)
     
     # Evaluate the model on the test data
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, np.argmax(y_pred, axis=1))
+    loss, acc = model.evaluate(X_test, y_test)
     result = f'{algorithm} - {pourcentage} - {acc:.4f}'
     print(result)
-    return acc
+    return loss, acc
 
 
 algorithms = {
-    # "random": select_samples_randomly,
-    # "clustering": select_samples_by_clustering,
-    # "representative_sampling": select_samples_by_representative_sampling,
+    "random": select_samples_randomly,
+    "clustering": select_samples_by_clustering,
+    "representative_sampling": select_samples_by_representative_sampling,
     "least_confidence": select_samples_by_least_confidence,
-    "margin": select_samples_by_margin,
+    "margin_of_confidence": select_samples_by_margin,
     # "entropy": select_samples_by_entropy,
     # "mixed_with_least_confidence_and_representative_sampling": select_by_mixed_with_least_confidence_and_representative_sampling,
     # "mixed_with_margin_and_clustering": select_by_mixed_with_margin_and_clustering,
@@ -145,15 +144,20 @@ algorithms = {
 
 pourcentages = [
     1,
-    # 2,
-    # 5,
-    # 10, 
-    # 15, 
-    # 20, 
-    # 25, 
-    # 30, 
-    # 35,
+    5,
+    10, 
+    15, 
+    20, 
 ]
+
+# pourcentages = [
+#     1,
+#     2,
+#     4,
+#     8,
+#     16,
+#     32,
+# ]
 
 selected_samples = {}
 
@@ -180,8 +184,8 @@ def in_common_pourcentages():
 
 
 def main():
-    base_acc = evaluate_model("base", 0)
-    update_json(RESULTS_PATH, "base", 0, base_acc, None)
+    base_loss, base_acc = evaluate_model("base", 0)
+    update_json(RESULTS_PATH, "base", 0, base_acc, base_loss, None)
     for algorithm in algorithms:
         selected_samples[algorithm] = {}
         for pourcentage in pourcentages:
@@ -189,8 +193,8 @@ def main():
             X_train_selected, y_train_selected = algorithms[algorithm](quantity)
             selected_samples[algorithm][pourcentage] = X_train_selected
             history = retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage)
-            acc = evaluate_model(algorithm, pourcentage)
-            update_json(RESULTS_PATH, algorithm, pourcentage, acc, history.history)
+            loss, acc = evaluate_model(algorithm, pourcentage)
+            update_json(RESULTS_PATH, algorithm, pourcentage, acc, loss, history.history)
     in_common_pourcentages()
 
 if __name__ == "__main__":

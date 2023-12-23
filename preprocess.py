@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from utils import clean_text, tokenize_words
 from config import N, test_size
 
+FRACTION = 200
 
 def create_dict():
 
@@ -49,10 +50,11 @@ def get_dict():
 
 
 def load_food_review_data():
+
     df = pd.read_csv("data/ReviewsFood.csv")
-    X = np.zeros((len(df)//100, 2), dtype=object)
+    X = np.zeros((len(df)//FRACTION, 2), dtype=object)
     print(len(X))
-    for i in tqdm.tqdm(range(len(df)//100), "Cleaning X"):
+    for i in tqdm.tqdm(range(len(df)//FRACTION), "Cleaning X"):
         target = df['Text'].loc[i]
         X[i, 0] = clean_text(target)
         X[i, 1] = df['Score'].loc[i]-1

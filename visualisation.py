@@ -6,7 +6,7 @@ import numpy as np
 
 RESULTS_PATH = 'results/results.json'
 
-def update_json(file_path, method_name, percentage, performance, history):
+def update_json(file_path, method_name, percentage, performance, loss, history):
     data = {}
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
@@ -18,6 +18,7 @@ def update_json(file_path, method_name, percentage, performance, history):
                 {
                     'pourcentage': percentage,
                     'accuracy_test': performance,
+                    'loss_test': loss,
                     'accuracy_train': history['accuracy'] if history else [],
                     'loss_train': history['loss'] if history else [],
                 }
@@ -32,6 +33,7 @@ def update_json(file_path, method_name, percentage, performance, history):
                     {
                         'pourcentage': percentage, 
                         'accuracy_test': performance,
+                        'loss_test': loss,
                         'accuracy_train': history['accuracy'] if history else [],
                         'loss_train': history['loss'] if history else [],
 
