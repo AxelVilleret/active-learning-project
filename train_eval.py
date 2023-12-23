@@ -8,8 +8,7 @@ from preprocess import load_food_review_data
 from model import get_model
 from config import sequence_length, embedding_size, batch_size, epochs, num_classes
 from sklearn.metrics import accuracy_score
-
-PRETRAINED_MODEL_PATH = 'models/base_0.h5'
+from global_variables import *
     
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_food_review_data()
 

@@ -4,9 +4,10 @@ from utils import clean_text, tokenize_words
 from config import embedding_size, sequence_length
 from keras.preprocessing.sequence import pad_sequences
 from preprocess import get_dict
+from global_variables import *
 
 vocab2int = get_dict()
-model = load_model("models/base_0.h5")
+model = load_model(PRETRAINED_MODEL_PATH)
 
 
 if __name__ == "__main__":

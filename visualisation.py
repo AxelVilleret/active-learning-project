@@ -2,42 +2,39 @@ from collections import defaultdict
 import json
 import os
 import matplotlib.pyplot as plt
+from matplotlib.style import available
 import numpy as np
+from global_variables import *
 
-RESULTS_PATH = 'results/results.json'
+available_methods = [BASE, RANDOM, CLUSTERING, REPRESENTATIVE_SAMPLING, LEAST_CONFIDENCE, MARGIN, ENTROPY, MIXED_WITH_LEAST_CONFIDENCE_AND_REPRESENTATIVE_SAMPLING, MIXED_WITH_MARGIN_AND_CLUSTERING]
 
 def update_json(file_path, method_name, percentage, performance, loss, history):
     data = {}
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             data = json.load(f)
+    
+    performance = {
+        PERCENTAGE: percentage,
+        ACCURACY_TEST: performance,
+        LOSS_TEST: loss,
+        ACCURACY_TRAIN: history['accuracy'] if history else [],
+        LOSS_TRAIN: history['loss'] if history else [],
+    }
 
-    for method in data.get('methodes', []):
-        if method['nom'] == method_name:
-            method['performances'].append(
-                {
-                    'pourcentage': percentage,
-                    'accuracy_test': performance,
-                    'loss_test': loss,
-                    'accuracy_train': history['accuracy'] if history else [],
-                    'loss_train': history['loss'] if history else [],
-                }
+    for method in data.get(METHODS, []):
+        if method[NAME] == method_name:
+            method[PERFORMANCES].append(
+                performance
             )
             break
     else:
-        data['methodes'].append(
+        data[METHODS].append(
             {
-                'nom': method_name, 
-                'performances': 
+                NAME: method_name, 
+                PERFORMANCES: 
                 [
-                    {
-                        'pourcentage': percentage, 
-                        'accuracy_test': performance,
-                        'loss_test': loss,
-                        'accuracy_train': history['accuracy'] if history else [],
-                        'loss_train': history['loss'] if history else [],
-
-                    }
+                    performance
                 ]
             }
         )
@@ -46,24 +43,25 @@ def update_json(file_path, method_name, percentage, performance, loss, history):
         json.dump(data, f, indent=4)
 
 
-def plot_graph(file_path):
+def plot_graph(file_path=RESULTS_PATH, methods=available_methods):
     with open(file_path, 'r') as f:
         data = json.load(f)
 
-    for method in data['methodes']:
-        if method['nom'] == 'base':
-            # Pour la méthode 'base', tracez une ligne horizontale à la valeur de performance
-            y_value = method['performances'][0]['accuracy_test']
-            plt.axhline(y=y_value, label='base', color='r')
-        else:
-            performances = defaultdict(list)
-            for perf in method['performances']:
-                performances[perf['pourcentage']].append(perf['accuracy_test'])
+    for method in data[METHODS]:
+        if method[NAME] in methods:
+            if method[NAME] == BASE:
+                # Pour la méthode 'base', tracez une ligne horizontale à la valeur de performance
+                y_value = method[PERFORMANCES][0][ACCURACY_TEST]
+                plt.axhline(y=y_value, label=BASE, color='r')
+            else:
+                performances = defaultdict(list)
+                for perf in method[PERFORMANCES]:
+                    performances[perf[PERCENTAGE]].append(perf[ACCURACY_TEST])
 
-            x = sorted(performances.keys())
-            y = [sum(performances[p])/len(performances[p]) for p in x]
+                x = sorted(performances.keys())
+                y = [sum(performances[p])/len(performances[p]) for p in x]
 
-            plt.plot(x, y, label=method['nom'])
+                plt.plot(x, y, label=method[NAME])
 
     plt.xlabel('Pourcentage')
     plt.ylabel('Performance de test')
@@ -73,7 +71,8 @@ def plot_graph(file_path):
 
 def main():
     # Appelez la fonction plot_graph avec le chemin du fichier
-    plot_graph(RESULTS_PATH)
+    plot_graph()
+    plot_graph(methods=[BASE, LEAST_CONFIDENCE, MARGIN, CLUSTERING])
 
 if __name__ == '__main__':
     main()

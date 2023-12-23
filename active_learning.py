@@ -8,10 +8,10 @@ from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 from datetime import datetime
 from sklearn.cluster import KMeans
-from visualisation import RESULTS_PATH, update_json
+from visualisation import update_json
 from collections import Counter
 import pandas as pd
-from train_eval import PRETRAINED_MODEL_PATH
+from global_variables import *
 
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_cloth_review_data()
 
@@ -105,15 +105,14 @@ def select_by_mixed_with_integrated_scores(first_method, second_method, quantity
     return X_train_mixed, y_train_mixed
 
 def select_by_mixed_with_least_confidence_and_representative_sampling(quantity):
-    return select_by_mixed_with_integrated_scores("least_confidence", "representative_sampling", quantity)
+    return select_by_mixed_with_integrated_scores(LEAST_CONFIDENCE, REPRESENTATIVE_SAMPLING, quantity)
 
 def select_by_mixed_with_margin_and_clustering(quantity):
-    return select_by_mixed_with_integrated_scores("margin", "clustering", quantity)
+    return select_by_mixed_with_integrated_scores(MARGIN, CLUSTERING, quantity)
 
 def retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage):
     print(f"Retraining model with this number of samples: {len(X_train_selected)}")
-    model_path = 'models/base_0.h5'
-    model = load_model(model_path)
+    model = load_model(PRETRAINED_MODEL_PATH)
     checkpointer = ModelCheckpoint(f"models/{algorithm}_{pourcentage}.h5", save_best_only=True, verbose=1)
     history = model.fit(X_train_selected, y_train_selected, epochs=epochs, validation_data=(
         X_validation, y_validation), batch_size=batch_size, callbacks=[checkpointer])
@@ -132,14 +131,14 @@ def evaluate_model(algorithm, pourcentage):
 
 
 algorithms = {
-    "random": select_samples_randomly,
-    "clustering": select_samples_by_clustering,
-    "representative_sampling": select_samples_by_representative_sampling,
-    "least_confidence": select_samples_by_least_confidence,
-    "margin_of_confidence": select_samples_by_margin,
-    # "entropy": select_samples_by_entropy,
-    # "mixed_with_least_confidence_and_representative_sampling": select_by_mixed_with_least_confidence_and_representative_sampling,
-    # "mixed_with_margin_and_clustering": select_by_mixed_with_margin_and_clustering,
+    RANDOM: select_samples_randomly,
+    CLUSTERING: select_samples_by_clustering,
+    REPRESENTATIVE_SAMPLING: select_samples_by_representative_sampling,
+    LEAST_CONFIDENCE: select_samples_by_least_confidence,
+    MARGIN: select_samples_by_margin,
+    # ENTROPY: select_samples_by_entropy,
+    # MIXED_WITH_LEAST_CONFIDENCE_AND_REPRESENTATIVE_SAMPLING: select_by_mixed_with_least_confidence_and_representative_sampling,
+    # MIXED_WITH_MARGIN_AND_CLUSTERING: select_by_mixed_with_margin_and_clustering,
 }
 
 pourcentages = [
@@ -150,7 +149,7 @@ pourcentages = [
     20, 
 ]
 
-# pourcentages = [
+# pourcentages_seuil = [
 #     1,
 #     2,
 #     4,
@@ -184,8 +183,8 @@ def in_common_pourcentages():
 
 
 def main():
-    base_loss, base_acc = evaluate_model("base", 0)
-    update_json(RESULTS_PATH, "base", 0, base_acc, base_loss, None)
+    base_loss, base_acc = evaluate_model(BASE, 0)
+    update_json(RESULTS_PATH, BASE, 0, base_acc, base_loss, None)
     for algorithm in algorithms:
         selected_samples[algorithm] = {}
         for pourcentage in pourcentages:
@@ -195,7 +194,7 @@ def main():
             history = retrain_model(X_train_selected, y_train_selected, algorithm, pourcentage)
             loss, acc = evaluate_model(algorithm, pourcentage)
             update_json(RESULTS_PATH, algorithm, pourcentage, acc, loss, history.history)
-    in_common_pourcentages()
+    # in_common_pourcentages()
 
 if __name__ == "__main__":
     main()

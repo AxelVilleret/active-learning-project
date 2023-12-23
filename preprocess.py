@@ -5,18 +5,16 @@ import tqdm
 import pickle
 from collections import Counter
 from sklearn.model_selection import train_test_split
-
+from global_variables import *
 from utils import clean_text, tokenize_words
 from config import N, test_size
-
-FRACTION = 200
 
 def create_dict():
 
     vocab = []
-    df_food = pd.read_csv("data/ReviewsFood.csv")
+    df_food = pd.read_csv(FOOD_DATASET_PATH)
 
-    df_cloth = pd.read_csv("data/ReviewsCloth.csv")
+    df_cloth = pd.read_csv(CLOTH_DATASET_PATH)
 
     for i in tqdm.tqdm(range(len(df_food)), "Cleaning X"):
         target = clean_text(df_food['Text'].loc[i]).split()
@@ -51,10 +49,10 @@ def get_dict():
 
 def load_food_review_data():
 
-    df = pd.read_csv("data/ReviewsFood.csv")
-    X = np.zeros((len(df)//FRACTION, 2), dtype=object)
+    df = pd.read_csv(FOOD_DATASET_PATH)
+    X = np.zeros((len(df)//FRACTION_OF_FOOD, 2), dtype=object)
     print(len(X))
-    for i in tqdm.tqdm(range(len(df)//FRACTION), "Cleaning X"):
+    for i in tqdm.tqdm(range(len(df)//FRACTION_OF_FOOD), "Cleaning X"):
         target = df['Text'].loc[i]
         X[i, 0] = clean_text(target)
         X[i, 1] = df['Score'].loc[i]-1
@@ -77,7 +75,7 @@ def load_food_review_data():
 
 
 def load_cloth_review_data():
-    df = pd.read_csv("data/ReviewsCloth.csv")
+    df = pd.read_csv(CLOTH_DATASET_PATH)
     print(len(df))
     X = np.zeros((len(df), 2), dtype=object)
     for i in tqdm.tqdm(range(len(df)), "Cleaning X"):
