@@ -1,17 +1,31 @@
-### Model Architecture hyper parameters
-embedding_size = 64
-sequence_length = 500
-LSTM_units = 128
+from selection_algorithms import *
 
-### Training parameters
-batch_size = 64
-epochs = 5
+### Active learning parameters
+algorithms = {
+    # RANDOM: select_samples_randomly,
+    # CLUSTERING: select_samples_by_clustering,
+    # REPRESENTATIVE_SAMPLING: select_samples_by_representative_sampling,
+    # LEAST_CONFIDENCE: select_samples_by_least_confidence,
+    # MARGIN: select_samples_by_margin,
+    # ENTROPY: select_samples_by_entropy,
+    MIXED_WITH_LEAST_CONFIDENCE_AND_CLUSTERING: select_by_mixed_with_least_confidence_and_clustering,
+    MIXED_WITH_MARGIN_AND_CLUSTERING: select_by_mixed_with_margin_and_clustering,
+}
 
-### Preprocessing parameters
-# words that occur less than n times to be deleted from dataset
-N = 10
+pourcentages = [
+    1,
+    5,
+    10,
+    15,
+    20,
+]
 
-# test size in ratio, train size is 1 - test_size
-test_size = 0.2
-
-num_classes = 5
+# pourcentages used to determine the number of samples to select
+# pourcentages = [
+#     1,
+#     2,
+#     4,
+#     8,
+#     16,
+#     32,
+# ]

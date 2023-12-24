@@ -4,10 +4,6 @@ from string import punctuation
 # make it a set to accelerate tests
 punc = set(punctuation)
 
-#def clean_text(text):
-#    return ''.join([ c.lower() for c in text if c not in punc ])
-
-
 def clean_text(text):
     cleaned_chars = [c.lower() for c in text if c not in punc]
     cleaned_text = ''.join(cleaned_chars)
@@ -25,3 +21,6 @@ def tokenize_words(words, vocab2int):
             # didn't add any unk, just ignore
             pass
     return tokenized_words
+
+def convert_pourcentage_to_quantity(pourcentage, X_train):
+    return int(pourcentage * len(X_train) / 100)

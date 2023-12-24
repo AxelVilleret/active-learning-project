@@ -3,10 +3,9 @@ import json
 import os
 import matplotlib.pyplot as plt
 from matplotlib.style import available
-import numpy as np
 from global_variables import *
 
-available_methods = [BASE, RANDOM, CLUSTERING, REPRESENTATIVE_SAMPLING, LEAST_CONFIDENCE, MARGIN, ENTROPY, MIXED_WITH_LEAST_CONFIDENCE_AND_REPRESENTATIVE_SAMPLING, MIXED_WITH_MARGIN_AND_CLUSTERING]
+available_methods = [BASE, RANDOM, CLUSTERING, REPRESENTATIVE_SAMPLING, LEAST_CONFIDENCE, MARGIN, ENTROPY, MIXED_WITH_LEAST_CONFIDENCE_AND_CLUSTERING, MIXED_WITH_MARGIN_AND_CLUSTERING]
 
 def update_json(file_path, method_name, percentage, performance, loss, history):
     data = {

@@ -42,7 +42,7 @@ python train.py
 You will obtain a file called `base_0.h5` in the `model` folder. However you can tune some parameters in `config.py` to improve **accuracy** such as number of LSTM units, embedding size, etc.
 
 # Active Learning
-To choose the selection algorithms and the number of samples, you can edit the `active_learning.py` file as follows:  
+To choose the selection algorithms and the number of samples, you can edit the corresponding parameters in the `config.py` file : 
 
 ![alt text](images/config.png)
 

@@ -1,4 +1,3 @@
-from re import L
 import numpy as np
 from keras.callbacks import ModelCheckpoint
 from keras.preprocessing import sequence
@@ -6,8 +5,6 @@ from keras.optimizers import Adam
 from keras.models import load_model
 from preprocess import load_food_review_data
 from model import get_model
-from config import sequence_length, embedding_size, batch_size, epochs, num_classes
-from sklearn.metrics import accuracy_score
 from global_variables import *
     
 X_train, X_validation, X_test, y_train, y_validation, y_test, vocab = load_food_review_data()
@@ -17,16 +14,16 @@ vocab_size = len(vocab) +1
 
 print("Vocab size:", vocab_size)
 
-X_train = sequence.pad_sequences(X_train, maxlen=sequence_length)
-X_validation = sequence.pad_sequences(X_validation, maxlen=sequence_length)
-X_test = sequence.pad_sequences(X_test, maxlen=sequence_length)
+X_train = sequence.pad_sequences(X_train, maxlen=SEQUENCE_LENGTH)
+X_validation = sequence.pad_sequences(X_validation, maxlen=SEQUENCE_LENGTH)
+X_test = sequence.pad_sequences(X_test, maxlen=SEQUENCE_LENGTH)
 
 y_train = y_train.astype(np.int32)
 y_validation = y_validation.astype(np.int32)
 y_test = y_test.astype(np.int32)
 
 def train_model():
-    model = get_model(vocab_size, sequence_length=sequence_length, embedding_size=embedding_size, num_classes=num_classes)
+    model = get_model(vocab_size, sequence_length=SEQUENCE_LENGTH, embedding_size=EMBEDDING_SIZE, num_classes=NUM_CLASSES)
     # Compiler le modèle
     model.compile(loss='sparse_categorical_crossentropy',
                 optimizer=Adam(),
@@ -35,8 +32,8 @@ def train_model():
     checkpointer = ModelCheckpoint(
         PRETRAINED_MODEL_PATH, save_best_only=True, verbose=1)
 
-    model.fit(X_train, y_train, epochs=epochs, validation_data=(
-        X_validation, y_validation), batch_size=batch_size, callbacks=[checkpointer])
+    model.fit(X_train, y_train, epochs=EPOCHS, validation_data=(
+        X_validation, y_validation), batch_size=BATCH_SIZE, callbacks=[checkpointer])
 
 train_model()
 

@@ -7,7 +7,6 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 from global_variables import *
 from utils import clean_text, tokenize_words
-from config import N, test_size
 
 def create_dict():
 
@@ -30,7 +29,7 @@ def create_dict():
     vocab = Counter(vocab)
 
     # delete words that occur less than 10 times
-    vocab = {k: v for k, v in vocab.items() if v >= N}
+    vocab = {k: v for k, v in vocab.items() if v >= 10}
 
     # word to integer encoder dict
     vocab2int = {word: i for i, word in enumerate(vocab, start=1)}
@@ -86,7 +85,6 @@ def load_cloth_review_data():
             X[i, 1] = rating-1
 
     lignes_non_zero = np.any(X != 0, axis=1)
-    # Utiliser ce masque pour obtenir la nouvelle matrice
     X = X[lignes_non_zero]
     print('Classes distribution:')
     print(np.unique(X[:, 1]))

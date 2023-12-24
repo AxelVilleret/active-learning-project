@@ -44,6 +44,13 @@
                     "loss_test": 1.2160859107971191,
                     "accuracy_train": [],
                     "loss_train": []
+                },
+                {
+                    "pourcentage": 0,
+                    "accuracy_test": 0.5152317881584167,
+                    "loss_test": 1.2160859107971191,
+                    "accuracy_train": [],
+                    "loss_train": []
                 }
             ]
         },
