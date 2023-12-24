@@ -74,7 +74,7 @@ def plot_graph(file_path=RESULTS_PATH, methods=available_methods, save_path=IMAG
 def main():
     # Appelez la fonction plot_graph avec le chemin du fichier
     plot_graph()
-    plot_graph(methods=[BASE, LEAST_CONFIDENCE, MARGIN, CLUSTERING], save_path='results/results_2.png')
+    plot_graph(methods=[BASE, LEAST_CONFIDENCE, MARGIN], save_path='results/results_2.png')
 
 if __name__ == '__main__':
     main()

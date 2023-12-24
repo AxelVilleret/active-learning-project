@@ -5,22 +5,22 @@
             "performances": [
                 {
                     "pourcentage": 0,
-                    "accuracy_test": 0.4988962411880493,
-                    "loss_test": 1.2240370512008667,
+                    "accuracy_test": 0.5152317881584167,
+                    "loss_test": 1.2160859107971191,
                     "accuracy_train": [],
                     "loss_train": []
                 },
                 {
                     "pourcentage": 0,
-                    "accuracy_test": 0.5381898283958435,
-                    "loss_test": 1.1860257387161255,
+                    "accuracy_test": 0.5152317881584167,
+                    "loss_test": 1.2160859107971191,
                     "accuracy_train": [],
                     "loss_train": []
                 },
                 {
                     "pourcentage": 0,
-                    "accuracy_test": 0.4927152395248413,
-                    "loss_test": 1.2274892330169678,
+                    "accuracy_test": 0.5152317881584167,
+                    "loss_test": 1.2160859107971191,
                     "accuracy_train": [],
                     "loss_train": []
                 }

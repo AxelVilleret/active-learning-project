@@ -8,7 +8,7 @@ algorithms = {
     # LEAST_CONFIDENCE: select_samples_by_least_confidence,
     # MARGIN: select_samples_by_margin,
     # ENTROPY: select_samples_by_entropy,
-    MIXED_WITH_LEAST_CONFIDENCE_AND_CLUSTERING: select_by_mixed_with_least_confidence_and_clustering,
+    # MIXED_WITH_LEAST_CONFIDENCE_AND_CLUSTERING: select_by_mixed_with_least_confidence_and_clustering,
     MIXED_WITH_MARGIN_AND_CLUSTERING: select_by_mixed_with_margin_and_clustering,
 }
 
