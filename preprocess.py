@@ -36,14 +36,14 @@ def create_dict():
     vocab2int = {word: i for i, word in enumerate(vocab, start=1)}
     # pickle int2vocab for testing
     print("Pickling vocab2int...")
-    pickle.dump(vocab2int, open("data/vocab2int.pickle", "wb"))
+    pickle.dump(vocab2int, open(VOCAB2INT, "wb"))
 
 
 def get_dict():
-    if not os.path.exists("data/vocab2int.pickle"):
+    if not os.path.exists(VOCAB2INT):
         create_dict()
 
-    vocab2int = pickle.load(open("data/vocab2int.pickle", "rb"))
+    vocab2int = pickle.load(open(VOCAB2INT, "rb"))
     return vocab2int
 
 

@@ -26,3 +26,5 @@ PRETRAINED_MODEL_PATH = f'models/{BASE}_0.h5'
 RESULTS_PATH = 'results/results.json'
 FOOD_DATASET_PATH = 'data/ReviewsFood.csv'
 CLOTH_DATASET_PATH = 'data/ReviewsCloth.csv'
+VOCAB2INT = "data/vocab2int.pickle"
+IMAGE_RESULTS_PATH = 'results/results.png'

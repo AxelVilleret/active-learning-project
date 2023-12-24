@@ -9,7 +9,9 @@ from global_variables import *
 available_methods = [BASE, RANDOM, CLUSTERING, REPRESENTATIVE_SAMPLING, LEAST_CONFIDENCE, MARGIN, ENTROPY, MIXED_WITH_LEAST_CONFIDENCE_AND_REPRESENTATIVE_SAMPLING, MIXED_WITH_MARGIN_AND_CLUSTERING]
 
 def update_json(file_path, method_name, percentage, performance, loss, history):
-    data = {}
+    data = {
+        METHODS: []
+    }
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             data = json.load(f)
@@ -43,7 +45,7 @@ def update_json(file_path, method_name, percentage, performance, loss, history):
         json.dump(data, f, indent=4)
 
 
-def plot_graph(file_path=RESULTS_PATH, methods=available_methods):
+def plot_graph(file_path=RESULTS_PATH, methods=available_methods, save_path=IMAGE_RESULTS_PATH):
     with open(file_path, 'r') as f:
         data = json.load(f)
 
@@ -66,13 +68,14 @@ def plot_graph(file_path=RESULTS_PATH, methods=available_methods):
     plt.xlabel('Pourcentage')
     plt.ylabel('Performance de test')
     plt.legend()
+    plt.savefig(save_path)  # Enregistre le graphique dans un fichier
     plt.show()
 
 
 def main():
     # Appelez la fonction plot_graph avec le chemin du fichier
     plot_graph()
-    plot_graph(methods=[BASE, LEAST_CONFIDENCE, MARGIN, CLUSTERING])
+    plot_graph(methods=[BASE, LEAST_CONFIDENCE, MARGIN, CLUSTERING], save_path='results/results_2.png')
 
 if __name__ == '__main__':
     main()

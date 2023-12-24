@@ -43,10 +43,6 @@ train_model()
 model = load_model(PRETRAINED_MODEL_PATH)
 
 # Evaluate the model on the test data
-# y_pred = model.predict(X_test)
-
-# acc = accuracy_score(y_test, np.argmax(y_pred, axis=1))
-
 loss, acc = model.evaluate(X_test, y_test)
 print(f'Accuracy: {acc:.4f}')
 print(f'Loss: {loss:.4f}')

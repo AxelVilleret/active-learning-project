@@ -8,7 +8,7 @@ from config import sequence_length, embedding_size, batch_size, epochs
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score
 from datetime import datetime
 from sklearn.cluster import KMeans
-from visualisation import update_json
+from visualization import update_json
 from collections import Counter
 import pandas as pd
 from global_variables import *
@@ -141,7 +141,7 @@ algorithms = {
     # MIXED_WITH_MARGIN_AND_CLUSTERING: select_by_mixed_with_margin_and_clustering,
 }
 
-pourcentages = [
+pourcentages = [ 
     1,
     5,
     10, 
@@ -149,7 +149,8 @@ pourcentages = [
     20, 
 ]
 
-# pourcentages_seuil = [
+# pourcentages used to determine the number of samples to select
+# pourcentages = [
 #     1,
 #     2,
 #     4,
