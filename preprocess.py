@@ -7,6 +7,28 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 from global_variables import *
 from utils import clean_text, tokenize_words
+import matplotlib.pyplot as plt
+
+def create_histogram(labels, values, bins=None):
+    # Vérifier si les labels sont uniques
+    if len(labels) != len(set(labels)):
+        print("Erreur : Les labels doivent être uniques.")
+        return
+
+    # Vérifier si les deux tableaux ont la même longueur
+    if len(labels) != len(values):
+        print("Erreur : Les deux tableaux doivent avoir la même longueur.")
+        return
+
+    # Créer un histogramme
+    plt.bar(labels, values)
+
+    # Ajouter un titre
+    plt.title('Classes Distribution')
+
+    # Afficher l'histogramme
+    plt.show()
+
 
 def create_dict():
 
@@ -56,9 +78,7 @@ def load_food_review_data():
         X[i, 0] = clean_text(target)
         X[i, 1] = df['Score'].loc[i]-1
 
-    print('Classes distribution:')
-    print(np.unique(X[:, 1]))
-    print(np.bincount(X[:, 1].astype(int)).astype(np.int32))
+    # create_histogram(np.unique(X[:, 1]), np.bincount(X[:, 1].astype(int)).astype(np.int32))
 
     vocab2int = get_dict()
 
@@ -86,9 +106,7 @@ def load_cloth_review_data():
 
     lignes_non_zero = np.any(X != 0, axis=1)
     X = X[lignes_non_zero]
-    print('Classes distribution:')
-    print(np.unique(X[:, 1]))
-    print(np.bincount(X[:, 1].astype(int)).astype(np.int32))
+    # create_histogram(np.unique(X[:, 1]), np.bincount(X[:, 1].astype(int)).astype(np.int32))
 
     vocab2int = get_dict()
 
@@ -102,3 +120,7 @@ def load_cloth_review_data():
         X_temp, y_temp, test_size=0.5, random_state=19)
 
     return X_train, X_validation, X_test, y_train, y_validation, y_test, vocab2int
+
+if __name__ == "__main__":
+    # load_food_review_data()
+    load_cloth_review_data()
